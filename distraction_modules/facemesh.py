@@ -79,7 +79,7 @@ class Distraction():
 
     @staticmethod
     def head_pose(landmarks, img_shape, dist_coeffs=np.zeros((4, 1), dtype=np.float64)):
-        """Estimation of headpose using PnP algorithm"""
+        """Estimation of headpose using Perspective-n-Point  algorithm"""
         face_2d = []
         face_3d = []
 
