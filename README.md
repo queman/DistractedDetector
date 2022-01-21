@@ -1,41 +1,44 @@
 # DistractedDetector
-Detection of distracted status (using Face Mesh)
+Detection of distracted status (using Face Mesh).
 
 # Problem
 We proposed a method to detect the status of a participant in an online meeting/ class,... from real-time video (webcam), whether he is distracted or not?
 
 # Method
-1. [Face Mesh](https://google.github.io/mediapipe/solutions/face_mesh.html) (MediaPipe) is used to detect 468 3-D facial landmarks with fast and lightweight ultilization.
-![facemesh_process drawio](https://user-images.githubusercontent.com/80699068/150458401-b817e7bc-8a12-4f89-b22c-d9582b642ebe.png)
 
-2. Select the landmarks of interest for head, eyes, lip
+1. Use [Face Mesh](https://google.github.io/mediapipe/solutions/face_mesh.html) (MediaPipe) to detect 468 3-D facial landmarks. Face Mesh is fast and lightweight 
+for real-time application.
+  ![facemesh_process drawio](https://user-images.githubusercontent.com/80699068/150458401-b817e7bc-8a12-4f89-b22c-d9582b642ebe.png)
+
+2. Select the landmarks of interest for head, eyes, lip: only 18 landmarks is chosen.
 
 3. Measure the deviation of facial attributes in each region compared with the ones of "attentive" status.
-- Head's landmarks to detect head pose estimation (looking at another direction)
-- Eyes' landmarks to detect aperture of eyes (sleepness, drowsiness), direction of eyes (looking elsewhere)
-- Lip's landmarks to detect the distance from the upper lip to the lower lip (talking or yawning)
-For this method, we have used the rule-based model according to Emotional AI rules of [Khan et al.,2020](http://dx.doi.org/10.5815/ijigsp.2020.02.03). It includes: 
+- Head's landmarks to detect head pose estimation (looking at another direction).
+- Eyes' landmarks to detect aperture of eyes (sleepness, drowsiness), direction of eyes (looking elsewhere).
+- Lip's landmarks to detect the distance from the upper lip to the lower lip (talking or yawning).
+
+  For this method, we have used the rule-based model according to Emotional AI rules of [Khan et al.,2020](http://dx.doi.org/10.5815/ijigsp.2020.02.03). It includes: 
 - Behiavior rules: defining the range of deviation in which the behavior is determined as distracted or not, each of the rules is applied to one group of landmarks
 - Threshold rules: defining the threshold of time for distracted behavior. If that behavior lasts longer than the threshold, then we finally conclude that he is distracted (there's no matter when we look somewhere awhile, isn't it?).
 
-* Note: We can modify the rules so that it suits in different situations (for example, in our demo, we treat the "Looking Down" detection more specially by setting its threshold time longer than other directions (Right, Left, Up) in case the participant is taking note or reading book,...)
+  Note: We can modify the rules so that it suits in different situations (for example, in our demo, we treat the "Looking Down" detection more specially by setting its threshold time longer than other directions (Right, Left, Up) in case the participant is taking note or reading book,...).
 
 # Flow of logic
 ![Untitled Diagram_hot drawio](https://user-images.githubusercontent.com/80699068/150455792-94febdcf-bdad-4b53-8b84-594f304c07f2.png)
 
 
 # Results
-- In case of one participant whose face is in center region of camera with normal not too bad lighting condition, the Face Mesh + Rules method perform well in most situations (also capable when the face is slightly occluded or crossing the image boundary) for realtime-video.
-- The speed of detection is about 20-30 FPS on my Intel(R) Core(TM) i7-3740QM CPU for input from webcam.
-- 
+- In case of one participant whose face is in center region of camera with normal not too bad lighting condition, the Face Mesh + Rules method performs well in most situations (also capable when the face is slightly occluded or crossing the image boundary) for real-time video.
+- The speed of detection is about 20-30 FPS on our Intel(R) Core(TM) i7-3740QM CPU for input from webcam.
+
 # Evaluation
-- Input : A  video from webcam of a participant in a conference
+- Input : A  video of a participant in a conference
 - Method: 
-  - Manually annotate "Distracted"(1) or  "No distracted" (0) or "No face detected"(2) for 1 frame after every 20 frames (~1 frame/s). For simplicity, I ignore the threshold rules while evaluating. Then each frame is labeled as "1" immediately when there is a distracted behevior detected (constrainted time = 0 for all attributes).
+  - Manually annotate "Distracted"(1) or  "No distracted" (0) or "No face detected"(2) for 1 frame after every 20 frames (~1 frame/s). For simplicity, we ignore the threshold rules while evaluating. Then each frame is labeled as "1" immediately when there is a distracted behevior detected (constrainted time = 0 for all attributes).
   - Compare the annotation with the results from FaceMesh + Emotional AI rules' distraction detector
   - Accuracy = Total number of frames were correctly predicted by model  /   Total number of frames 
   - The wrong detection is considered to be the misclassification between "1" and "0" statuses or when more than half of the face is shown but get "2" label.
- - Here is my evaluation on some of the meeting recordings (all with pixel sizes of 352 x 288) from [AMI Meeting Corpus](https://groups.inf.ed.ac.uk/ami/corpus/overview.shtml):
+ - Here is our evaluation on some of the meeting recordings (all with pixel sizes of 352 x 288) from [AMI Meeting Corpus](https://groups.inf.ed.ac.uk/ami/corpus/overview.shtml):
 
 |                    | ES2002a.Closeup1.avi | ES2016a.Closeup3.avi | EN2003a.Closeup2.avi | EN2003a.Closeup1.avi | IB4003.Closeup1.avi | ES2016a.Closeup1.avi |                            |
 |--------------------|----------------------|----------------------|----------------------|----------------------|---------------------|----------------------|----------------------------|
@@ -45,16 +48,17 @@ For this method, we have used the rule-based model according to Emotional AI rul
 | Accuracy           | 0.9486               | 0.7352               | 0.7953               | 0.9700               | 0.9358              | 0.8988               | Average accuracy = 0.8806  |
    
    The accuracies exhibit at different levels. It can mostly detect the distracted/ no distracted status correcly when the face actually does so. The wrong cases come from the misclassification, i.e. detect "1" while "0" is true and vice versa.
+   
    - Wrong detections of eye direction:
-     + The BINARY_THRESHOLD algorithm used here is sensitive to the pixel values. Therefore, our model can't recognize when one's eyes looking at left/right in bad light condition or in low quality videos; when eyes are small,... 
+  
+     + The BINARY_THRESHOLD algorithm used here is sensitive to the pixel values. Therefore, our method can't recognize when one's eyes looking at left/right in bad light condition or in low quality videos; when eyes are small,... 
      
 ![frame548](https://user-images.githubusercontent.com/80699068/150468654-1daa1830-9504-4918-bdfd-f92f0a8eeb00.jpg)
 ![frame545](https://user-images.githubusercontent.com/80699068/150468680-cb204f27-f0f3-465d-bf3e-f0663ca3688b.jpg)
 ![frame1402](https://user-images.githubusercontent.com/80699068/150479926-b6e82ec0-cc62-462b-a94b-4ff36e5c0008.jpg)
 ![frame229](https://user-images.githubusercontent.com/80699068/150480264-fed75e0f-cc0c-4893-b057-36ec698ca4e4.jpg)
 
-
-     + When the participant's pose is towards another direction (from the center) but his eyes are shown to concentrate to the center indeed. Our model sees it as a "looking elsewhere" case.
+     + When the participant's pose is towards another direction (from the center) but his eyes are shown to concentrate to the center indeed. Our method sees it as a "looking elsewhere" case.
      
 ![frame923](https://user-images.githubusercontent.com/80699068/150478029-b0c67e6a-736f-4529-ac38-9a24b7cbeaaf.jpg)
 ![frame955](https://user-images.githubusercontent.com/80699068/150478051-652362c3-afec-483f-8fa5-9e58d57e933d.jpg)
@@ -75,7 +79,7 @@ For this method, we have used the rule-based model according to Emotional AI rul
 Though the above accuracies are not consistent for various cases. It is somehow because of our way in evaluation (the time dimension is ignored). After all, its ability in real-time application is good (see a demo in example)
 
 # Future plans:
-- We'd like to handle the "eye direction" error better by more accurate method of eyes detection (Iris solution of MediaPipe may also help)
+- We'd like to handle the "eye direction" error better by more accurate method of eyes detection (Iris solution of MediaPipe may help)
 - Experiment more by apply the model-based method (with machine learning/ deep learning models) instead of the rule-based one
-- Widen the dataset of evaluation
-- Deploy the detector as web API for real-time input which can also send backs the statiscal results of the participant's attention level during the meeting/ lecture. 
+- Widen the dataset for evaluation
+- Deploy the detector as a web API for real-time input which can also send backs the statiscal results of the participant's attention level during the meeting/ lecture. 
