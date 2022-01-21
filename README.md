@@ -36,7 +36,7 @@ for real-time application.
 - Method: 
   - Manually annotate "Distracted"(1) or  "No distracted" (0) or "No face detected"(2) for 1 frame after every 20 frames (~1 frame/s). For simplicity, we ignore the threshold rules while evaluating. Then each frame is labeled as "1" immediately when there is a distracted behevior detected (constrainted time = 0 for all attributes).
   - Compare the annotation with the results from FaceMesh + Emotional AI rules' distraction detector
-  - Accuracy = Total number of frames were correctly predicted by model  /   Total number of frames 
+  - F1-score = Total number of frames were correctly predicted by model  /   Total number of frames 
   - The wrong detection is considered to be the misclassification between "1" and "0" statuses or when more than half of the face is shown but get "2" label.
  - Here is our evaluation on some of the meeting recordings (all with pixel sizes of 352 x 288) from [AMI Meeting Corpus](https://groups.inf.ed.ac.uk/ami/corpus/overview.shtml):
 
@@ -45,9 +45,9 @@ for real-time application.
 |  length            | 20m30s               | 23m4s                | 37m19s               | 37m17s               | 33m38s              | 23m3s                |                            |
 | # frames           | 1537                 | 1730                 | 2799                 | 2796                 | 2523                | 1729                 |                            |
 | # wrong detections | 79                   | 458                  | 573                  | 84                   | 162                 | 175                  |                            |
-| Accuracy           | 0.9486               | 0.7352               | 0.7953               | 0.9700               | 0.9358              | 0.8988               | Average accuracy = 0.8806  |
+|F1-score           | 0.9486               | 0.7352               | 0.7953               | 0.9700               | 0.9358              | 0.8988               | Average score = 0.8806  |
    
-   The accuracies exhibit at different levels. It can mostly detect the distracted/ no distracted status correcly when the face actually does so. The wrong cases come from the misclassification, i.e. detect "1" while "0" is true and vice versa.
+   The accuracies exhibit at different levels. It can mostly detect the distracted/ no distracted status correcly when the face actually does so (high recall). The wrong cases come from the misclassification, i.e. detect "1" while "0" is true and vice versa.
    
    - Wrong detections of eye direction:
   
