@@ -8,6 +8,7 @@ We proposed a method to detect the status of a participant in an online meeting/
 
 1. Use [Face Mesh](https://google.github.io/mediapipe/solutions/face_mesh.html) (MediaPipe) to detect 468 3-D facial landmarks. Face Mesh is fast and lightweight 
 for real-time application.
+
   ![facemesh_process drawio](https://user-images.githubusercontent.com/80699068/150458401-b817e7bc-8a12-4f89-b22c-d9582b642ebe.png)
 
 2. Select the landmarks of interest for head, eyes, lip: only 18 landmarks is chosen.
