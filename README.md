@@ -81,6 +81,6 @@ Though the above accuracies are not consistent for various cases. It is somehow 
 
 # Future plans:
 - We'd like to handle the "eye direction" error better by more accurate method of eyes detection (Iris solution of MediaPipe may help)
-- Experiment more by apply the model-based method (with machine learning/ deep learning models) instead of the rule-based one
+- Experiment more by applying the model-based method (with machine learning/ deep learning models) instead of the rule-based one
 - Widen the dataset for evaluation
 - Deploy the detector as a web API for real-time input which can also send backs the statiscal results of the participant's attention level during the meeting/ lecture. 
